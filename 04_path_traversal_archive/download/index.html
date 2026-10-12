@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UCTF Bank — Download</title><link rel="stylesheet" href="../style.css"></head>
+<body><div class="layout">
+<aside class="sidebar"><div class="brand"><div class="logo">UB</div><div><div class="brand-title">UCTF Bank</div><div class="brand-sub">Reports Archive</div></div></div>
+<nav><a class="disabled" href="#">Главная</a><a class="active" href="../">Архив</a><a class="disabled" href="#">Документы</a><a class="disabled" href="#">Настройки</a></nav>
+<div class="side-bottom"><span class="green-dot"></span> Защищённое соединение<small>Internal Services</small></div></aside>
+<main><header class="topbar"><div><small>КОРПОРАТИВНАЯ СИСТЕМА</small><strong>Reports Archive</strong></div></header>
+<section class="content"><article class="card"><span class="eyebrow blue">FILE VIEWER</span><h1 id="name"></h1><pre id="body" style="white-space:pre-wrap;font-family:inherit"></pre></article></section></main></div>
+<script>
+const FLAG4=(()=>{const a=atob("NDE3Lk8RExcAaxUAAh5REwECBGsTFwIMRz4cBglGAws8Dl0NFxAV"),k="arch4";let s="";for(let i=0;i<a.length;i++)s+=String.fromCharCode(a.charCodeAt(i)^k.charCodeAt(i%k.length));return s;})();
+const file=new URLSearchParams(location.search).get("file")||"";
+document.getElementById("name").textContent=file || "Файл не выбран";
+const data={
+ "monthly/report_oct.txt":"Октябрь 2026\nСлужебный отчёт по операциям.\nСтатус: закрыт.",
+ "monthly/report_sep.txt":"Сентябрь 2026\nСлужебный отчёт по операциям.\nСтатус: закрыт.",
+ "../private/config.txt":"archive_root=/srv/reports/archive\nmode=legacy\nFLAG="+FLAG4
+};
+document.getElementById("body").textContent = data[file] ?? "404 — файл не найден";
+</script></body></html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UCTF Bank — Incident Materials</title><link rel="stylesheet" href="style.css"></head>
+<body><div class="layout">
+<aside class="sidebar"><div class="brand"><div class="logo">UB</div><div><div class="brand-title">UCTF Bank</div><div class="brand-sub">Incident Materials</div></div></div>
+<nav><a class="disabled" href="#">Главная</a><a class="active" href="./">Материалы</a><a class="disabled" href="#">Архив</a><a class="disabled" href="#">Настройки</a></nav>
+<div class="side-bottom"><span class="green-dot"></span> Защищённое соединение<small>Internal Services</small></div></aside>
+<main><header class="topbar"><div><small>КОРПОРАТИВНАЯ СИСТЕМА</small><strong>Incident Materials</strong></div>
+<div class="mini-user"><div class="avatar">ИС</div><div><b>Илья Соколов</b><span>Стажёр отдела ИБ</span></div></div></header>
+<section class="content"><div id="gate"></div></section></main></div>
+<script>
+const TOKEN_HASH="0537ae73213662bd201eeb0107627e2f8275ca0ce5f2c0654bfe2bcb5ee5b04d";
+const EXPECTED_HASH="44406e88a2eac33297603d36b0d3ac8cec46616b33ae6d71e53ca4bc7e93f94e";
+const FINAL=(()=>{const a=atob("IDM4cA4WBVoQLwlOARUCRRwfAmkcAzNYGgQzUBwcCWkBCRxTCA=="),k="upl6";let s="";for(let i=0;i<a.length;i++)s+=String.fromCharCode(a.charCodeAt(i)^k.charCodeAt(i%k.length));return s;})();
+async function sha256(t){
+ const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));
+ return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+(async()=>{
+ const token=new URLSearchParams(location.search).get("token")||"";
+ const gate=document.getElementById("gate");
+ if(await sha256(token)!==TOKEN_HASH){
+  gate.innerHTML=`<article class="card"><h1>Доступ запрещён</h1></article>`;
+  return;
+ }
+ gate.innerHTML=`<section class="hero"><div><span class="eyebrow">incident/upload</span><h1>Загрузка материалов инцидента</h1><p>Принимаются только файлы формата <code>.png</code> или <code>.jpg</code>.</p></div><div class="hero-status"><span>Доступ</span><b>Разрешён</b></div></section>
+ <article class="card" style="margin-top:24px"><span class="eyebrow blue">Вложение</span><h2>Добавить файл</h2>
+ <form id="uploadForm"><div class="form-row"><label>Файл (.png, .jpg)</label><input class="input" type="file" id="file" accept=".png,.jpg" required></div><button class="button" style="margin-top:16px">Проверить файл</button></form><div id="result"></div></article>`;
+ document.getElementById("uploadForm").addEventListener("submit",async e=>{
+   e.preventDefault();
+   const f=document.getElementById("file").files[0], r=document.getElementById("result");
+   if(!f)return;
+   const n=f.name.toLowerCase();
+   if(!(n.endsWith(".png")||n.endsWith(".jpg"))){
+     r.innerHTML='<div class="message error">Недопустимый формат файла.</div>'; return;
+   }
+   const raw=(await f.text()).trim();
+   if(await sha256(raw)===EXPECTED_HASH){
+     r.innerHTML=`<div class="flag-box"><small>FINAL FLAG</small><code>${FINAL}</code></div>`;
+   }else{
+     r.innerHTML='<div class="message error">Файл не прошёл проверку.</div>';
+   }
+ });
+})();
+</script></body></html>

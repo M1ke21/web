@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UCTF Bank — Search Service</title><link rel="stylesheet" href="style.css"></head>
+<body><div class="layout">
+<aside class="sidebar"><div class="brand"><div class="logo">UB</div><div><div class="brand-title">UCTF Bank</div><div class="brand-sub">Search Service</div></div></div>
+<nav><a class="disabled" href="#">Главная</a><a class="active" href="./">Поиск</a><a class="disabled" href="#">Документы</a><a class="disabled" href="#">Отчёты</a></nav>
+<div class="side-bottom"><span class="green-dot"></span> Защищённое соединение<small>Internal Services</small></div></aside>
+<main><header class="topbar"><div><small>КОРПОРАТИВНАЯ СИСТЕМА</small><strong>Search Service</strong></div>
+<div class="mini-user"><div class="avatar">ИС</div><div><b>Илья Соколов</b><span>Стажёр отдела ИБ</span></div></div></header>
+<section class="content"><section class="hero"><div><span class="eyebrow">search-service</span><h1>Поиск банковских операций</h1><p>Введите номер операции или название получателя.</p></div><div class="hero-status"><span>Источник</span><b>Core Ledger</b></div></section>
+<article class="card" style="margin-top:24px"><form id="search"><label>Поисковый запрос</label><div style="display:flex;gap:10px"><input class="input" id="q" placeholder="Например: TRX-1001"><button class="button">Найти</button></div></form>
+<div id="result"></div></article></section></main></div>
+<script>
+const FLAG3=(()=>{const a=atob("JjI4dQgAGVYBCDNHFh0AQCwFA1wsHBlQGww="),k="sql3";let s="";for(let i=0;i<a.length;i++)s+=String.fromCharCode(a.charCodeAt(i)^k.charCodeAt(i%k.length));return s;})();
+const visible = [
+ ["REQ-7314","Служебный поиск","0.00","Заявка из старого модуля согласований."],
+ ["TRX-1001","ООО Север","125000.00","Оплата услуг"],
+ ["TRX-1002","АО Вектор","98000.00","Поставка оборудования"]
+];
+const hidden = ["SYS-9007","SYSTEM","0.00","../private/config.txt | "+FLAG3];
+const qEl=document.getElementById("q"), result=document.getElementById("result");
+const initial=new URLSearchParams(location.search).get("q")||"";
+qEl.value=initial;
+function render(q){
+ if(!q){result.innerHTML="";return;}
+ let rows=[];
+ if(q.trim()==="' OR '1'='1") rows=[...visible,hidden];
+ else rows=visible.filter(r=>r[0]===q || r[1].toLowerCase().includes(q.toLowerCase()));
+ if(!rows.length){result.innerHTML='<div class="notice" style="margin-top:20px">Ничего не найдено.</div>';return;}
+ result.innerHTML=`<div class="table" style="margin-top:20px"><div class="tr head"><span>ID</span><span>Получатель</span><span>Сумма</span><span>Комментарий</span></div>${rows.map(r=>`<div class="tr"><span>${r[0]}</span><span>${r[1]}</span><span>${r[2]}</span><span>${r[3]}</span></div>`).join("")}</div>`;
+}
+render(initial);
+document.getElementById("search").addEventListener("submit",e=>{
+ e.preventDefault(); const q=qEl.value; history.replaceState(null,"","?q="+encodeURIComponent(q)); render(q);
+});
+</script></body></html>

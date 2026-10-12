@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UCTF Bank — Legacy Approval</title><link rel="stylesheet" href="style.css"></head>
+<body><div class="layout">
+<aside class="sidebar"><div class="brand"><div class="logo">UB</div><div><div class="brand-title">UCTF Bank</div><div class="brand-sub">Legacy Approval</div></div></div>
+<nav><a class="disabled" href="#">Главная</a><a class="active" href="./">Согласования</a><a class="disabled" href="#">Документы</a><a class="disabled" href="#">Отчёты</a></nav>
+<div class="side-bottom"><span class="green-dot"></span> Защищённое соединение<small>Internal Services</small></div></aside>
+<main><header class="topbar"><div><small>КОРПОРАТИВНАЯ СИСТЕМА</small><strong>Legacy Approval</strong></div>
+<div class="mini-user"><div class="avatar">ИС</div><div><b>Илья Соколов</b><span>Стажёр отдела ИБ</span></div></div></header>
+<section class="content"><section class="hero"><div><span class="eyebrow">Legacy Approval</span><h1>Заявки на служебный доступ</h1><p>Старый модуль согласования всё ещё используется для части внутренних операций после миграции портала.</p></div><div class="hero-status"><span>Ваша роль</span><b>user</b></div></section>
+<div class="toolbar" style="margin-top:28px"><div><span class="eyebrow blue">Очередь</span><h2>Последние заявки</h2></div></div>
+<div id="list"></div><div id="msg"></div></section></main></div>
+<script>
+const FLAG2=(()=>{const a=atob("JyYlcQkDA1gcERRZFjoYRC0LHkMtBBJUFxYCaBEKH0MACh1K"),k="req7";let s="";for(let i=0;i<a.length;i++)s+=String.fromCharCode(a.charCodeAt(i)^k.charCodeAt(i%k.length));return s;})();
+const reqs = [
+ {id:7314,title:"Разблокировка служебного поиска",owner:"Марк Серков",department:"Техническая поддержка",status:"Ожидает",comment:"Заявка перенесена из старого модуля после миграции."},
+ {id:7317,title:"Доступ к архиву инструкций",owner:"Мария Белова",department:"Клиентский сервис",status:"Согласовано",comment:"Согласовано автоматически."}
+];
+const list=document.getElementById("list");
+list.innerHTML=reqs.map(r=>`<article class="card" style="margin-top:18px">
+<div class="page-title"><div><span class="eyebrow blue">REQ-${r.id}</span><h2>${r.title}</h2></div><span class="pill">${r.status}</span></div>
+<div class="grid"><div class="notice"><b>Инициатор</b><div>${r.owner}</div></div><div class="notice"><b>Подразделение</b><div>${r.department}</div></div></div>
+<p class="muted">${r.comment}</p>
+${r.id===7314?`<button id="approve7314" class="button" disabled>Согласовать</button>`:""}
+</article>`).join("");
+document.getElementById("approve7314").addEventListener("click",()=>{
+ document.getElementById("msg").innerHTML=`<div class="flag-box" style="margin-top:18px"><small>APPROVED · REQ-7314</small><code>${FLAG2}</code><div style="margin-top:10px">REQ-7314</div></div>`;
+});
+</script></body></html>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UCTF Bank — Профиль</title><link rel="stylesheet" href="../style.css"></head>
+<body><div class="layout">
+<aside class="sidebar"><div class="brand"><div class="logo">UB</div><div><div class="brand-title">UCTF Bank</div><div class="brand-sub">Портал сотрудника</div></div></div>
+<nav><a class="disabled" href="#">Главная</a><a class="active" href="./?id=1042">Модуль</a><a class="disabled" href="#">Документы</a><a class="disabled" href="#">Отчёты</a></nav>
+<div class="side-bottom"><span class="green-dot"></span> Защищённое соединение<small>Internal Services</small></div></aside>
+<main><header class="topbar"><div><small>КОРПОРАТИВНАЯ СИСТЕМА</small><strong>Портал сотрудника</strong></div>
+<div class="mini-user"><div class="avatar">ИС</div><div><b>Илья Соколов</b><span>Стажёр отдела ИБ</span></div></div></header>
+<section class="content"><div id="view"></div></section></main></div>
+<script>
+const FLAG1=(()=>{const a=atob("OHcmLRZdFgQfaxsYMlodHzJVBx8FWwACF1UGAgJaDw=="),k="m4rk";let s="";for(let i=0;i<a.length;i++)s+=String.fromCharCode(a.charCodeAt(i)^k.charCodeAt(i%k.length));return s;})();
+const profiles = {
+  "1042": {name:"Илья Соколов",position:"Стажёр отдела ИБ",department:"Информационная безопасность",email:"i.sokolov@uctf-bank.local",status:"Активен",access:"Базовый",note:"Первичная учётная запись сотрудника."},
+  "889": {name:"Мария Белова",position:"Специалист клиентского сервиса",department:"Клиентский сервис",email:"m.belova@uctf-bank.local",status:"Активен",access:"Базовый",note:"Профиль сотрудника клиентского сервиса."},
+  "888": {name:"Марк Серков",position:"Инженер поддержки",department:"Техническая поддержка",email:"m.serkov@uctf-bank.local",status:"Активен",access:"Служебный",note:"После миграции временно оставить доступ к модулю legacy-approval.",flag:FLAG1},
+  "887": {name:"Ольга Лебедева",position:"Экономист",department:"Расчётный отдел",email:"o.lebedeva@uctf-bank.local",status:"Отпуск",access:"Базовый",note:"Профиль сотрудника расчётного отдела."}
+};
+const id = new URLSearchParams(location.search).get("id") || "1042";
+const p = profiles[id];
+const v = document.getElementById("view");
+if (!p) {
+  v.innerHTML = `<article class="card"><h1>Профиль не найден</h1><p class="muted">Сотрудник с ID ${id} отсутствует.</p><a class="button" href="./?id=1042">Вернуться</a></article>`;
+} else {
+  const initials = p.name.split(" ").map(x=>x[0]).join("").slice(0,2);
+  v.innerHTML = `<div class="page-title"><div><span class="eyebrow blue">Сотрудник</span><h1>Карточка профиля</h1></div><span class="pill">ID ${id}</span></div>
+  <div class="grid"><article class="card"><div class="person"><div class="avatar" style="width:72px;height:72px;font-size:20px">${initials}</div><div><b style="font-size:22px">${p.name}</b><span>${p.position}</span><small>${p.department}</small></div></div>
+  <div class="grid" style="margin-top:22px"><div class="notice"><b>E-mail</b><div>${p.email}</div></div><div class="notice"><b>Статус</b><div>${p.status}</div></div><div class="notice"><b>Доступ</b><div>${p.access}</div></div></div></article>
+  <aside class="card"><span class="eyebrow blue">Служебная информация</span><h2>Внутренняя заметка</h2><p class="muted">${p.note}</p>${p.flag?`<div class="flag-box"><small>INCIDENT MARKER</small><code>${p.flag}</code></div>`:""}</aside></div>`;
+}
+</script></body></html>
