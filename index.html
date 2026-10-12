@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UCTF Bank — Support Preview</title><link rel="stylesheet" href="style.css"></head>
+<body><div class="layout">
+<aside class="sidebar"><div class="brand"><div class="logo">UB</div><div><div class="brand-title">UCTF Bank</div><div class="brand-sub">Support Desk</div></div></div>
+<nav><a class="disabled" href="#">Главная</a><a class="active" href="./">Поддержка</a><a class="disabled" href="#">Мои обращения</a><a class="disabled" href="#">Архив</a></nav>
+<div class="side-bottom"><span class="green-dot"></span> Защищённое соединение<small>Internal Services</small></div></aside>
+<main><header class="topbar"><div><small>КОРПОРАТИВНАЯ СИСТЕМА</small><strong>Support Preview</strong></div>
+<div class="mini-user"><div class="avatar">ИС</div><div><b>Илья Соколов</b><span>Стажёр отдела ИБ</span></div></div></header>
+<section class="content"><section class="hero"><div><span class="eyebrow">support/preview</span><h1>Предпросмотр обращения</h1><p>Перед отправкой сотрудник может посмотреть, как будет выглядеть обращение в системе поддержки.</p></div><div class="hero-status"><span>Номер обращения</span><b>SUP-2048</b></div></section>
+<article class="card" style="margin-top:24px"><span class="eyebrow blue">Новое обращение · SUP-2048</span><h2>Данные обращения</h2>
+<form id="previewForm">
+<div class="form-row"><label>Тема обращения</label><input class="input" id="subject" required placeholder="Например: Ошибка в служебном модуле"></div>
+<div class="form-row"><label>Текст обращения</label><textarea id="text" rows="7" required placeholder="Введите текст обращения..."></textarea></div>
+<button class="button" style="margin-top:16px">Показать предпросмотр</button></form></article>
+<article class="card" id="previewCard" style="margin-top:18px;display:none">
+<span class="eyebrow blue">PREVIEW · SUP-2048</span><h2 id="previewSubject"></h2>
+<iframe id="previewFrame" title="Предпросмотр" style="width:100%;min-height:180px;border:0;background:white;border-radius:12px"></iframe>
+</article></section></main></div>
+<script>
+const F5=(()=>{const a=atob("LTAncwMLAEYnAwFQDhoWQicBBlsLLABWChoDQQU="),k="xss5";let s="";for(let i=0;i<a.length;i++)s+=String.fromCharCode(a.charCodeAt(i)^k.charCodeAt(i%k.length));return s;})();
+const TOK=(()=>{const a=atob("IVlGATJcKg9ZJFl7QA=="),k="tok6";let s="";for(let i=0;i<a.length;i++)s+=String.fromCharCode(a.charCodeAt(i)^k.charCodeAt(i%k.length));return s;})();
+document.getElementById("previewForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ document.getElementById("previewSubject").textContent=document.getElementById("subject").value;
+ const frame=document.getElementById("previewFrame");
+ document.getElementById("previewCard").style.display="block";
+ const userHtml=document.getElementById("text").value;
+ const secret=F5+"\\ntoken: "+TOK;
+ const bootstrap=`<script>
+ const __realFetch=window.fetch.bind(window);
+ window.fetch=(u,o)=>{
+   if(String(u)==='/flag') return Promise.resolve(new Response(${JSON.stringify(secret)},{status:200,headers:{'Content-Type':'text/plain;charset=utf-8'}}));
+   return __realFetch(u,o);
+ };
+ <\/script>`;
+ const d=frame.contentWindow.document;
+ d.open(); d.write(bootstrap+userHtml); d.close();
+});
+</script></body></html>
